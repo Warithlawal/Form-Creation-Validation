@@ -1,51 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('registration-form');
-    const feedbackDiv = document.getElementById('form-feedback');
+    const addButton = document.getElementById('add-task-btn');
+    const taskInput = document.getElementById('task-input');
+    const taskList = document.getElementById('task-list');
 
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const username = document.getElementById('username').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+    function addTask() {
+        const taskText = taskInput.value.trim();
 
-        const validationResults = validateForm(username, email, password);
-        displayFeedback(validationResults);
+        if (taskText === "") {
+            alert("Please enter a task.");
+            return;
+        }
+
+        // Create the new task element
+        const taskItem = document.createElement('li');
+        taskItem.textContent = taskText;
+
+        // Create the remove button for the task
+        const removeButton = document.createElement('button');
+        removeButton.textContent = "Remove";
+        removeButton.className = 'remove-btn';
+
+        // Add event listener to the remove button to delete the task
+        removeButton.onclick = () => {
+            taskList.removeChild(taskItem);
+        };
+
+        // Append the remove button to the task item and the task item to the list
+        taskItem.appendChild(removeButton);
+        taskList.appendChild(taskItem);
+
+        // Clear the task input field
+        taskInput.value = "";
+    }
+
+    // Add task when the button is clicked
+    addButton.addEventListener('click', addTask);
+
+    // Add task when the Enter key is pressed in the input field
+    taskInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            addTask();
+        }
     });
-
-    function validateForm(username, email, password) {
-        let isValid = true;
-        let messages = [];
-
-        // Username validation
-        if (username.length < 3) {
-            isValid = false;
-            messages.push("Username must be at least 3 characters long.");
-        }
-
-        // Email validation
-        if (!email.includes('@') || !email.includes('.')) {
-            isValid = false;
-            messages.push("Email must contain '@' and '.'.");
-        }
-
-        // Password validation
-        if (password.length < 8) {
-            isValid = false;
-            messages.push("Password must be at least 8 characters long.");
-        }
-
-        return { isValid, messages };
-    }
-
-    function displayFeedback(validationResults) {
-        feedbackDiv.style.display = "block";
-
-        if (validationResults.isValid) {
-            feedbackDiv.textContent = "Registration successful!";
-            feedbackDiv.style.color = "#28a745";
-        } else {
-            feedbackDiv.innerHTML = validationResults.messages.join('<br>');
-            feedbackDiv.style.color = "#dc3545";
-        }
-    }
 });
